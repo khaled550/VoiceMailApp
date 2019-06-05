@@ -101,9 +101,7 @@ public class FXMLDocumentController implements Initializable {
 
         int selected = mailSelection.getSelectionModel().getSelectedIndex();
         user = "";
-        user = "congratulation450@gmail.com";
         pass = "";
-        pass = "66995571";
         logged = true;
         check("pop.gmail.com", "pop3", user, pass);
 
