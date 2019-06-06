@@ -99,9 +99,9 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     void login(final ActionEvent event) throws java.io.IOException {
 
-        int selected = mailSelection.getSelectionModel().getSelectedIndex();
-        user = "";
-        pass = "";
+        //int selected = mailSelection.getSelectionModel().getSelectedIndex();
+        user = emailTxt.getText();
+        pass = passTxt.getText();
         logged = true;
         check("pop.gmail.com", "pop3", user, pass);
 
