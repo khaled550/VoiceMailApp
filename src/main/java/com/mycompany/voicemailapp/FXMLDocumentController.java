@@ -9,10 +9,7 @@ import com.darkprograms.speech.microphone.Microphone;
 import com.darkprograms.speech.recognizer.GSpeechDuplex;
 import com.darkprograms.speech.recognizer.GSpeechResponseListener;
 import com.darkprograms.speech.recognizer.GoogleResponse;
-import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXPasswordField;
-import com.jfoenix.controls.JFXProgressBar;
-import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.*;
 
 import java.io.IOException;
 import java.net.URL;
@@ -71,6 +68,9 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private JFXProgressBar progBar;
 
+    @FXML
+    private JFXButton loginBtn;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
@@ -87,8 +87,16 @@ public class FXMLDocumentController implements Initializable {
         int selected = mailSelection.getSelectionModel().getSelectedIndex();
         user = emailTxt.getText();
         pass = passTxt.getText();
-        if(emailTxt.getText().isEmpty() || passTxt.getText().isEmpty())
+        if(emailTxt.getText().isEmpty() || passTxt.getText().isEmpty()){
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Enter email anf password", ButtonType.OK);
+                    alert.showAndWait();
+                }
+            });
             return;
+        }
 
         check(user, pass);
 
@@ -171,7 +179,7 @@ public class FXMLDocumentController implements Initializable {
 
     private void check(final String user, final String password) {
         progBar.setVisible(true);
-
+        loginBtn.setDisable(true);
 
         System.out.println("email : "+user);
         System.out.println("password : "+password);
@@ -236,6 +244,7 @@ public class FXMLDocumentController implements Initializable {
                 } catch (Exception e) {
                     e.printStackTrace();
                     progBar.setVisible(false);
+                    loginBtn.setDisable(false);
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -248,30 +257,5 @@ public class FXMLDocumentController implements Initializable {
         }).start();
 
         Platform.setImplicitExit(false);
-        /*if (logged){
-            Parent root = null;
-            try {
-                root = FXMLLoader.load(getClass().getResource("/fxml/Emails.fxml"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Stage stage = new Stage();
-            stage.setTitle("Emails");
-            Scene scene = new Scene(root);
-
-            stage.setScene(scene);
-
-            stage.show();
-            Stage loginWindow = (Stage) emailTxt.getScene().getWindow();
-            loginWindow.hide();
-        } else {
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "incorrect email or password", ButtonType.OK);
-                    alert.showAndWait();
-                }
-            });
-        }*/
     }
 }

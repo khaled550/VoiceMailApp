@@ -167,7 +167,16 @@ public class EmailsController implements Initializable {
                 }
             }
         });
-        emails.forEach(word -> tts.speak(word, 2.0f, false, true));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    emails.forEach(word -> tts.speak(word, 2.0f, false, true));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     @FXML
