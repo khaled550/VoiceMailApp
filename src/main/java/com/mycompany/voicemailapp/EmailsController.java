@@ -167,8 +167,7 @@ public class EmailsController implements Initializable {
                 }
             }
         });
-        for (int i = 0; i < emails.size(); i++)
-            emails.forEach(word -> tts.speak(word, 2.0f, false, true));
+        emails.forEach(word -> tts.speak(word, 2.0f, false, true));
     }
 
     @FXML

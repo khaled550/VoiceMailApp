@@ -87,12 +87,15 @@ public class FXMLDocumentController implements Initializable {
         int selected = mailSelection.getSelectionModel().getSelectedIndex();
         user = emailTxt.getText();
         pass = passTxt.getText();
-        //check("pop.gmail.com", "pop3", user, pass);
+        if(emailTxt.getText().isEmpty() || passTxt.getText().isEmpty())
+            return;
+
+        check(user, pass);
 
         //StringBuilder output8 = new StringBuilder("my email is kha@gmail.com my password is 98989898");
         //System.out.println("length iss:" + output8.length());
         //System.out.println("email iss:  " + pass);
-        mic = new Microphone(FLACFileWriter.FLAC);
+        /*mic = new Microphone(FLACFileWriter.FLAC);
         //Don't use the below google api key , make your own !!! :)
         duplex = new GSpeechDuplex("AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpBXqWBgw");
 
@@ -144,7 +147,7 @@ public class FXMLDocumentController implements Initializable {
 
                         if (!user.isEmpty() && !pass.isEmpty()){
                             check(user, pass);
-                        /*Parent root;
+                        *//*Parent root;
                         root = FXMLLoader.load(getClass().getResource("Emails.fxml"));
                         Stage stage = new Stage();
                         stage.setTitle("Emails");
@@ -154,7 +157,7 @@ public class FXMLDocumentController implements Initializable {
 
                         stage.show();
                         // Hide this current window (if this is what you want)
-                        ((Node)(event.getSource())).getScene().getWindow().hide();*/
+                        ((Node)(event.getSource())).getScene().getWindow().hide();*//*
                         }
                         System.out.println("email is : "+user);
                         System.out.println("password is : "+pass);
@@ -163,11 +166,12 @@ public class FXMLDocumentController implements Initializable {
                     }
                 }
             }
-        });
+        });*/
     }
 
     private void check(final String user, final String password) {
         progBar.setVisible(true);
+
 
         System.out.println("email : "+user);
         System.out.println("password : "+password);
@@ -209,16 +213,42 @@ public class FXMLDocumentController implements Initializable {
                     //emailFolder.close(false);
                     //store.close();
                     logged = true;
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            Parent root = null;
+                            try {
+                                root = FXMLLoader.load(getClass().getResource("/fxml/Emails.fxml"));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            Stage stage = new Stage();
+                            stage.setTitle("Emails");
+                            Scene scene = new Scene(root);
+
+                            stage.setScene(scene);
+
+                            stage.show();
+                            Stage loginWindow = (Stage) emailTxt.getScene().getWindow();
+                            loginWindow.hide();
+                        }
+                    });
                 } catch (Exception e) {
                     e.printStackTrace();
                     progBar.setVisible(false);
-                    logged = false;
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            Alert alert = new Alert(Alert.AlertType.ERROR, "incorrect email or password", ButtonType.OK);
+                            alert.showAndWait();
+                        }
+                    });
                 }
             }
         }).start();
 
         Platform.setImplicitExit(false);
-        if (logged){
+        /*if (logged){
             Parent root = null;
             try {
                 root = FXMLLoader.load(getClass().getResource("/fxml/Emails.fxml"));
@@ -242,6 +272,6 @@ public class FXMLDocumentController implements Initializable {
                     alert.showAndWait();
                 }
             });
-        }
+        }*/
     }
 }
