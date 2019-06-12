@@ -40,6 +40,7 @@ import javax.mail.Store;
  */
 public class FXMLDocumentController implements Initializable {
 
+    Alert alert = new Alert(Alert.AlertType.ERROR, "incorrect email or password", ButtonType.OK);
     private GSpeechDuplex duplex;
     private Microphone mic;
     public static final ObservableList data =
@@ -50,9 +51,6 @@ public class FXMLDocumentController implements Initializable {
     static boolean checked = false;
     
     public static Message[] messages;
-    
-    @FXML
-    private JFXComboBox<String> mailSelection;
     
     @FXML
     private JFXTextField emailTxt;
@@ -66,110 +64,78 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private JFXButton loginBtn;
 
+
+    VoiceRecognitionHelper voiceRecognitionHelperemail;
+    VoiceRecognitionHelper voiceRecognitionHelperpass;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        
-        mailSelection.getItems().add("Gmail");
+
         //mailSelection.getItems().add("Yahoo");
-        
-        
+        voiceRecognitionHelperpass = new VoiceRecognitionHelper();
+        voiceRecognitionHelperemail = new VoiceRecognitionHelper();
+
+        getEmail();
     }
-    
+
+    VoiceUtility voiceUtilit;
+    private void getEmail(){
+        voiceUtilit = new VoiceUtility();
+        voiceUtilit.SaySomeThingThenReceiveText(voiceRecognitionHelperemail,"please say your email",
+                v->{
+                    emailTxt.setText(v + "@gmail.com");
+                    voiceRecognitionHelperemail.destroy();
+                    getPass();
+                });/*
+        voiceRecognitionHelperemail.Init();
+        voiceRecognitionHelperemail.StartListener(v->{
+            voiceRecognitionHelperemail.destroy();
+            getPass();
+        });
+        */
+    }
+
+    boolean  checkedLogin =true;
+    private void getPass(){
+        voiceUtilit.SaySomeThingThenReceiveText( voiceRecognitionHelperpass,"enter your password now",
+                v->{ voiceRecognitionHelperpass.destroy();
+        user = emailTxt.getText();
+        pass = passTxt.getText();
+        check(user, pass);
+    });
+        voiceRecognitionHelperpass.StartListener(v->{
+            passTxt.setText(v);
+            voiceRecognitionHelperpass.destroy();
+        user = emailTxt.getText();
+        pass = passTxt.getText();
+        check(user, pass);
+    });
+    }
+
     @FXML
     void login(final ActionEvent event) throws java.io.IOException {
 
-        int selected = mailSelection.getSelectionModel().getSelectedIndex();
-        user = emailTxt.getText();
-        pass = passTxt.getText();
-        if(emailTxt.getText().isEmpty() || passTxt.getText().isEmpty()){
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Enter email anf password", ButtonType.OK);
-                    alert.showAndWait();
-                }
-            });
-            return;
+        voiceRecognitionHelperpass.destroy();
+        voiceRecognitionHelperemail.destroy();
+        if (checkedLogin){
+            checkedLogin = false;
+            user = emailTxt.getText();
+            pass = passTxt.getText();
+            if(emailTxt.getText().isEmpty() || passTxt.getText().isEmpty()){
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Enter email and password", ButtonType.OK);
+                        alert.showAndWait();
+                        checkedLogin=true;
+                    }
+                });
+                return;
+            }
+
+            check(user, pass);
         }
-
-        check(user, pass);
-
-        //StringBuilder output8 = new StringBuilder("my email is kha@gmail.com my password is 98989898");
-        //System.out.println("length iss:" + output8.length());
-        //System.out.println("email iss:  " + pass);
-        /*mic = new Microphone(FLACFileWriter.FLAC);
-        //Don't use the below google api key , make your own !!! :)
-        duplex = new GSpeechDuplex("AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpBXqWBgw");
-
-        duplex.setLanguage("en");
-
-        Platform.setImplicitExit(false);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    duplex.recognize(mic.getTargetDataLine(), mic.getAudioFormat());
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        }).start();
-
-        duplex.addResponseListener(new GSpeechResponseListener() {
-            String old_text = "";
-
-            public void onResponse(GoogleResponse gr) {
-                String output = "";
-                output = gr.getAllPossibleResponses().get(0);
-                if (gr.getResponse() == null) {
-                    if (this.old_text.contains("(")) {
-                        this.old_text = this.old_text.substring(0, this.old_text.indexOf('('));
-                    }
-                    System.out.println("Paragraph Line Added");
-                    this.old_text = this.old_text.replace(")", "").replace("( ", "");
-                    return;
-                }
-                if (output.contains("(")) {
-                    output = output.substring(0, output.indexOf('('));
-                }
-                if (!gr.getOtherPossibleResponses().isEmpty()) {
-                    //output = output + " (" + (String) gr.getOtherPossibleResponses().get(0) + ")";
-                }
-
-                System.out.println("output: "+output);
-                if (output.contains("email") && output.contains("password")){
-                    try {
-                        StringBuilder output8 = new StringBuilder("my email is kha@gmail.com my password is 98989898");
-                        //user = output8.substring(output8.indexOf("email is")+8, output8.indexOf("com")+3).trim();
-                        //pass = output8.substring(output8.indexOf("password is")+11).trim();
-                        user = output.substring(output.indexOf("email is")+8, output.indexOf("com")+3).trim();
-                        pass = output.substring(output.indexOf("password is")+11).trim();
-                        user = user.replaceAll("\\s+","");
-                        pass = pass.replaceAll("\\s+","");
-
-                        if (!user.isEmpty() && !pass.isEmpty()){
-                            check(user, pass);
-                        *//*Parent root;
-                        root = FXMLLoader.load(getClass().getResource("Emails.fxml"));
-                        Stage stage = new Stage();
-                        stage.setTitle("Emails");
-                        Scene scene = new Scene(root);
-
-                        stage.setScene(scene);
-
-                        stage.show();
-                        // Hide this current window (if this is what you want)
-                        ((Node)(event.getSource())).getScene().getWindow().hide();*//*
-                        }
-                        System.out.println("email is : "+user);
-                        System.out.println("password is : "+pass);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            }
-        });*/
     }
 
     private void check(final String user, final String password) {
@@ -243,8 +209,9 @@ public class FXMLDocumentController implements Initializable {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            Alert alert = new Alert(Alert.AlertType.ERROR, "incorrect email or password", ButtonType.OK);
-                            alert.showAndWait();
+                            if (!alert.isShowing())
+                                alert.showAndWait();
+
                         }
                     });
                 }

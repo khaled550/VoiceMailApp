@@ -1,20 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXPasswordField?>
 <?import com.jfoenix.controls.JFXProgressBar?>
 <?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="504.0" prefWidth="761.0" style="-fx-background-color: #ff6600;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.voicemailapp.FXMLDocumentController">
+<AnchorPane id="AnchorPane" prefHeight="504.0" prefWidth="761.0" style="-fx-background-color: #dfe4ea;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.voicemailapp.FXMLDocumentController">
    <children>
-      <AnchorPane layoutX="221.0" layoutY="106.0" prefHeight="292.0" prefWidth="318.0" style="-fx-background-color: #ffb380;">
+      <AnchorPane layoutX="73.0" layoutY="67.0" prefHeight="371.0" prefWidth="615.0" style="-fx-background-color: #fff;">
          <children>
-            <JFXTextField fx:id="emailTxt" layoutX="92.0" layoutY="79.0" promptText="Email" unFocusColor="#4d4d4d" />
-            <JFXPasswordField fx:id="passTxt" layoutX="92.0" layoutY="131.0" promptText="password" />
-            <JFXButton fx:id="loginBtn" layoutX="133.0" layoutY="214.0" onAction="#login" ripplerFill="#dfd64f" style="-fx-background-color: #993d00;" text="Login" textFill="WHITE" />
-            <JFXComboBox fx:id="mailSelection" layoutX="92.0" layoutY="30.0" prefHeight="31.0" prefWidth="169.0" />
+            <JFXTextField fx:id="emailTxt" layoutX="210.0" layoutY="208.0" prefHeight="31.0" prefWidth="197.0" promptText="Email" unFocusColor="#4d4d4d" />
+            <JFXPasswordField fx:id="passTxt" layoutX="209.0" layoutY="257.0" prefHeight="31.0" prefWidth="197.0" promptText="password" />
+            <JFXButton fx:id="loginBtn" layoutX="331.0" layoutY="307.0" onAction="#login" prefHeight="39.0" prefWidth="75.0" ripplerFill="#dfd64f" style="-fx-background-color: #3949AB;" text="Login" textFill="WHITE" />
+            <Label layoutX="209.0" layoutY="117.0" text="Sign in to Gmail">
+               <font>
+                  <Font size="28.0" />
+               </font>
+            </Label>
+            <Label layoutX="218.0" layoutY="167.0" text="Using Voice Commands">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <ImageView fitHeight="88.0" fitWidth="105.0" layoutX="264.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../gmail.png" />
+               </image>
+            </ImageView>
          </children>
       </AnchorPane>
       <JFXProgressBar fx:id="progBar" layoutX="281.0" layoutY="450.0" visible="false" />

@@ -15,6 +15,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -50,7 +51,7 @@ public class EmailsController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        TextToSpeech tts = new TextToSpeech();
+        /*TextToSpeech tts = new TextToSpeech();
 
         //=========================================================================
         //======================= Print available AUDIO EFFECTS ====================
@@ -116,10 +117,8 @@ public class EmailsController implements Initializable {
         //=========================================================================
         //===================== Now let's troll user ==============================
         //=========================================================================
-        //Loop infinitely
+        //Loop infinitely*/
 
-        Label mail = new Label("Mails");
-        emailsListView.getItems().add(mail);
         List<String> emails = new ArrayList<>();
 
         for (int i = 0, n = FXMLDocumentController.messages.length; i < n; i++) {
@@ -137,52 +136,89 @@ public class EmailsController implements Initializable {
         }
 
         System.out.println(emails.size());
+
+        VoiceRecognitionHelper voiceRecognitionHelperCommand = new VoiceRecognitionHelper();
+
+        VoiceUtility voiceUtility = new VoiceUtility();
+        voiceUtility.SaySomeThingThenReceiveText(voiceRecognitionHelperCommand,
+                voiceUtility.sayEmailTitles(emails).toString(), v->{
+                    System.out.println("Command : "+v);
+                    voiceUtility.WhichCommand(v);
+                    switch (voiceUtility.WhichCommand(v)){
+                        case 1:
+                            openemailContent(0);
+                        case  2:
+                            openSendEmail();
+                        case  3:
+                            //return 3;
+                    }
+                });
+
         emailsListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
             @Override
             public void handle(MouseEvent event) {
-                curPos = emailsListView.getSelectionModel().getSelectedIndex();
-
-                Parent root;
-                try {
-                    root = FXMLLoader.load(getClass().getResource("/fxml/EmailContent.fxml"));
-                    Stage stage = new Stage();
-                    stage.setTitle("Email Content");
-                    Scene scene = new Scene(root);
-
-                    stage.setScene(scene);
-
-                    stage.show();
-                } catch (IOException ex) {
-                    Logger.getLogger(EmailsController.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                openemailContent(emailsListView.getSelectionModel().getSelectedIndex());
             }
         });
-        new Thread(new Runnable() {
+        /*new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    emails.forEach(word -> tts.speak(word, 2.0f, false, true));
+                    //emails.forEach(word -> tts.speak(word, 2.0f, false, true));
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
-        }).start();
+        }).start();*/
     }
 
     @FXML
     void sendMail(MouseEvent event) {
-        Parent root;
-        try {
-            root = FXMLLoader.load(getClass().getResource("SendMail.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Send Mail");
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException ex) {
-            Logger.getLogger(EmailsController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        openSendEmail();
 
+    }
+
+    private void openSendEmail(){
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                Parent root = null;
+                try {
+                    root = FXMLLoader.load(getClass().getResource("/fxml/SendMail.fxml"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Stage stage = new Stage();
+                stage.setTitle("Send Mail");
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.show();
+            }
+        });
+    }
+
+    private void openemailContent(int pos){
+        curPos = pos;
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                Parent root = null;
+                try {
+                    root = FXMLLoader.load(getClass().getResource("/fxml/EmailContent.fxml"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Stage stage = new Stage();
+                stage.setTitle("Email Content");
+                Scene scene = new Scene(root);
+
+                stage.setScene(scene);
+
+                stage.show();
+            }
+        });
     }
 }
