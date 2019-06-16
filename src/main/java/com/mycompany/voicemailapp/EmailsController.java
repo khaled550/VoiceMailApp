@@ -38,6 +38,7 @@ import javax.mail.MessagingException;
 public class EmailsController implements Initializable {
 
     public static int curPos = -1;
+    int n = 0;
 
     @FXML
     private JFXListView<Label> emailsListView;
@@ -50,75 +51,6 @@ public class EmailsController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-        /*TextToSpeech tts = new TextToSpeech();
-
-        //=========================================================================
-        //======================= Print available AUDIO EFFECTS ====================
-        //=========================================================================
-
-        //Print all the available audio effects
-        tts.getAudioEffects().stream().forEach(audioEffect -> {
-            System.out.println("-----Name-----");
-            System.out.println(audioEffect.getName());
-            System.out.println("-----Examples-----");
-            System.out.println(audioEffect.getExampleParameters());
-            System.out.println("-----Help Text------");
-            System.out.println(audioEffect.getHelpText() + "\n\n");
-
-        });
-
-        //=========================================================================
-        //========================= Print available voices =========================
-        //=========================================================================
-
-        //Print all the available voices
-        tts.getAvailableVoices().stream().forEach(voice -> System.out.println("Voice: " + voice));
-
-        // Setting the Current Voice
-        tts.setVoice("cmu-slt-hsmm");
-
-        //=========================================================================
-        //========================= Let's try different effects=====================
-        //=========================================================================
-
-        //----- Hey you !-> check the help that is being printed on the console
-        //----- You will understand how to use the effects better :)
-
-        //VocalTractLinearScalerEffect
-        VocalTractLinearScalerEffect vocalTractLSE = new VocalTractLinearScalerEffect(); //russian drunk effect
-        vocalTractLSE.setParams("amount:10");
-
-        //JetPilotEffect
-        JetPilotEffect jetPilotEffect = new JetPilotEffect(); //epic fun!!!
-        jetPilotEffect.setParams("amount:5");
-
-        //RobotiserEffect
-        RobotiserEffect robotiserEffect = new RobotiserEffect();
-        robotiserEffect.setParams("amount:5");
-
-        //StadiumEffect
-        StadiumEffect stadiumEffect = new StadiumEffect();
-        stadiumEffect.setParams("amount:5");
-
-        //LpcWhisperiserEffect
-        LpcWhisperiserEffect lpcWhisperiserEffect = new LpcWhisperiserEffect(); //creepy
-        lpcWhisperiserEffect.setParams("amount:5");
-
-        //VolumeEffect
-        VolumeEffect volumeEffect = new VolumeEffect(); //be careful with this i almost got heart attack
-        volumeEffect.setParams("amount:0");
-
-        //Apply the effects
-        //----You can add multiple effects by using the method `getFullEffectAsString()` and + symbol to connect with the other effect that you want
-        //----check the example below
-        tts.getMarytts().setAudioEffects(stadiumEffect.getFullEffectAsString());// + "+" + stadiumEffect.getFullEffectAsString());
-
-        //=========================================================================
-        //===================== Now let's troll user ==============================
-        //=========================================================================
-        //Loop infinitely*/
-
         List<String> emails = new ArrayList<>();
 
         for (int i = 0, n = FXMLDocumentController.messages.length; i < n; i++) {
@@ -137,22 +69,7 @@ public class EmailsController implements Initializable {
 
         System.out.println(emails.size());
 
-        VoiceRecognitionHelper voiceRecognitionHelperCommand = new VoiceRecognitionHelper();
-
-        VoiceUtility voiceUtility = new VoiceUtility();
-        voiceUtility.SaySomeThingThenReceiveText(voiceRecognitionHelperCommand,
-                voiceUtility.sayEmailTitles(emails).toString(), v->{
-                    System.out.println("Command : "+v);
-                    voiceUtility.WhichCommand(v);
-                    switch (voiceUtility.WhichCommand(v)){
-                        case 1:
-                            openemailContent(0);
-                        case  2:
-                            openSendEmail();
-                        case  3:
-                            //return 3;
-                    }
-                });
+        readNext10Emails();
 
         emailsListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
@@ -194,7 +111,8 @@ public class EmailsController implements Initializable {
                 stage.setTitle("Send Mail");
                 Scene scene = new Scene(root);
                 stage.setScene(scene);
-                stage.show();
+                if (!stage.isShowing())
+                    stage.show();
             }
         });
     }
@@ -220,5 +138,35 @@ public class EmailsController implements Initializable {
                 stage.show();
             }
         });
+    }
+
+    private void readNext10Emails(){
+        List<String> emails = new ArrayList<>();
+        if (FXMLDocumentController.messages.length > 10){
+            n += 10;
+            for (int i = 0; i < n; i++) {
+                try {
+                    emails.add(FXMLDocumentController.messages[i].getSubject());
+                } catch (MessagingException ex) {
+                    Logger.getLogger(EmailsController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+
+        VoiceRecognitionHelper voiceRecognitionHelperCommand = new VoiceRecognitionHelper();
+        VoiceUtility voiceUtility = new VoiceUtility();
+        voiceUtility.SaySomeThingThenReceiveText(voiceRecognitionHelperCommand,
+                voiceUtility.sayEmailTitles(emails).toString(), v->{
+                    System.out.println("Command : "+v);
+                    voiceUtility.WhichCommand(v);
+                    switch (voiceUtility.WhichCommand(v)){
+                        case 1:
+                            //openemailContent(0);
+                        case  2:
+                            openSendEmail();
+                        case  3:
+                            readNext10Emails();
+                    }
+                });
     }
 }

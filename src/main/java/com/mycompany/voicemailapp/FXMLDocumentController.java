@@ -84,7 +84,9 @@ public class FXMLDocumentController implements Initializable {
         voiceUtilit = new VoiceUtility();
         voiceUtilit.SaySomeThingThenReceiveText(voiceRecognitionHelperemail,"please say your email",
                 v->{
-                    emailTxt.setText(v + "@gmail.com");
+                    user = v;
+                    user = user.replaceAll("\\s+","");
+                    emailTxt.setText(user + "@gmail.com");
                     voiceRecognitionHelperemail.destroy();
                     getPass();
                 });/*
@@ -97,20 +99,25 @@ public class FXMLDocumentController implements Initializable {
     }
 
     boolean  checkedLogin =true;
-    private void getPass(){
-        voiceUtilit.SaySomeThingThenReceiveText( voiceRecognitionHelperpass,"enter your password now",
-                v->{ voiceRecognitionHelperpass.destroy();
-        user = emailTxt.getText();
-        pass = passTxt.getText();
-        check(user, pass);
-    });
-        voiceRecognitionHelperpass.StartListener(v->{
-            passTxt.setText(v);
+
+    private void getPass() {
+        voiceUtilit.SaySomeThingThenReceiveText(voiceRecognitionHelperpass, "enter your password now",
+                v -> {
+                    /*voiceRecognitionHelperpass.destroy();
+                    user = emailTxt.getText();
+                    pass = passTxt.getText();
+                    user.replaceAll("\\s+", "");
+                    pass.replaceAll("\\s+", "");
+                    check(user, pass);*/
+                });
+        voiceRecognitionHelperpass.StartListener(v -> {
             voiceRecognitionHelperpass.destroy();
-        user = emailTxt.getText();
-        pass = passTxt.getText();
-        check(user, pass);
-    });
+            pass = v;
+            pass = pass.replaceAll("\\s+","");
+            pass = pass.substring(0, 1).toUpperCase() + pass.substring(1);
+            passTxt.setText(v);
+            check(user, pass);
+        });
     }
 
     @FXML
@@ -171,10 +178,7 @@ public class FXMLDocumentController implements Initializable {
                     messages = emailFolder.getMessages();
                     System.out.println("messages.length---" + messages.length);
 
-                    ObservableList<String> messagesList =FXCollections.observableArrayList ();
-
-                    for (int i = 0, n = messages.length; i < n; i++) {
-                        Message message = messages[i];
+                    for (Message message : messages) {
                         System.out.println("Subject: " + message.getSubject());
                     }
 

@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 public class VoiceUtility {
     public void SaySomeThingThenReceiveText(VoiceRecognitionHelper voiceRecognitionHelper,String speakText, TextListener textListener){
         TextToSpeech textToSpeech = new TextToSpeech();
-        textToSpeech.speak(speakText,2.0f, false, true);
+        textToSpeech.speak(speakText,1.0f, false, true);
 
         isTTSSpeaking(textToSpeech, finish -> {
             if (finish){
@@ -52,8 +52,11 @@ public class VoiceUtility {
     public StringBuilder sayEmailTitles(List<String> emails){
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < emails.size(); i++) {
-            stringBuilder.append(" , ");
+            stringBuilder.append("Email number ");
+            stringBuilder.append(i);
+            stringBuilder.append(" ");
             stringBuilder.append(emails.get(i));
+            stringBuilder.append(" , ");
         }
         return stringBuilder;
     }
