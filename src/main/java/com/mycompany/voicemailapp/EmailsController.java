@@ -26,7 +26,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import marytts.signalproc.effects.*;
 
 import javax.mail.MessagingException;
 
@@ -38,7 +37,8 @@ import javax.mail.MessagingException;
 public class EmailsController implements Initializable {
 
     public static int curPos = -1;
-    int n = 0;
+    int startIndex = 0;
+    int readListSize = 0;
 
     @FXML
     private JFXListView<Label> emailsListView;
@@ -142,28 +142,43 @@ public class EmailsController implements Initializable {
 
     private void readNext10Emails(){
         List<String> emails = new ArrayList<>();
-        if (FXMLDocumentController.messages.length > 10){
-            n += 10;
-            for (int i = 0; i < n; i++) {
+        int listSize = FXMLDocumentController.messages.length;
+
+        try {
+            if (listSize >= startIndex + 5){
+                readListSize += 5;
+            } else
+                readListSize = listSize - readListSize;
+
+            System.out.println("Sizee: "+ startIndex);
+            System.out.println("Sizee: "+ readListSize);
+
+            for (int i = startIndex; i < readListSize; i++) {
+                startIndex++;
                 try {
                     emails.add(FXMLDocumentController.messages[i].getSubject());
                 } catch (MessagingException ex) {
                     Logger.getLogger(EmailsController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
+
+        System.out.println("Sizee: "+ emails.size());
 
         VoiceRecognitionHelper voiceRecognitionHelperCommand = new VoiceRecognitionHelper();
         VoiceUtility voiceUtility = new VoiceUtility();
         voiceUtility.SaySomeThingThenReceiveText(voiceRecognitionHelperCommand,
                 voiceUtility.sayEmailTitles(emails).toString(), v->{
                     System.out.println("Command : "+v);
-                    voiceUtility.WhichCommand(v);
+                    voiceRecognitionHelperCommand.destroy();
                     switch (voiceUtility.WhichCommand(v)){
                         case 1:
                             //openemailContent(0);
                         case  2:
                             openSendEmail();
+                            voiceRecognitionHelperCommand.destroy();
                         case  3:
                             readNext10Emails();
                     }

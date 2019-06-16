@@ -37,7 +37,8 @@ public class VoiceRecognitionHelper {
     public void StartListener(TextListener textListener){
         micThread.start();
         duplex.addResponseListener(v-> {
-            textListener.getString(v.getAllPossibleResponses().get(0));
+            if (v.isFinalResponse())
+                textListener.getString(v.getResponse());
         });
     }
 

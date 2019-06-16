@@ -50,7 +50,39 @@ public class SendMailController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
 
+        VoiceRecognitionHelper voiceRecognitionHelperRec = new VoiceRecognitionHelper();
+        VoiceUtility voiceUtility = new VoiceUtility();
+        voiceUtility.SaySomeThingThenReceiveText(voiceRecognitionHelperRec,
+                "say receiver email", v->{
+                    voiceRecognitionHelperRec.destroy();
+                    System.out.println("receiver email : "+v);
+                    recieverMailTxt.setText(v+"@gmail.com");
+                    getSub();
+                });
+    }
 
+    private void getSub(){
+        VoiceRecognitionHelper voiceRecognitionHelperSub = new VoiceRecognitionHelper();
+        VoiceUtility voiceUtility = new VoiceUtility();
+        voiceUtility.SaySomeThingThenReceiveText(voiceRecognitionHelperSub,
+                "say email subject", v->{
+                    voiceRecognitionHelperSub.destroy();
+                    System.out.println("subjectTxt : "+v);
+                    subjectTxt.setText(v);
+                    getContent();
+                });
+    }
+
+    private void getContent(){
+        VoiceRecognitionHelper voiceRecognitionHelperCont = new VoiceRecognitionHelper();
+        VoiceUtility voiceUtility = new VoiceUtility();
+        voiceUtility.SaySomeThingThenReceiveText(voiceRecognitionHelperCont,
+                "say email content", v->{
+                    voiceRecognitionHelperCont.destroy();
+                    System.out.println("mailConentTxt : "+v);
+                    mailConentTxt.setText(v);
+                    sendEmail();
+                });
     }
 
     @FXML
@@ -63,7 +95,10 @@ public class SendMailController implements Initializable {
                 alert.showAndWait();
             }
         });*/
+        sendEmail();
+    }
 
+    private void sendEmail(){
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -72,25 +107,18 @@ public class SendMailController implements Initializable {
 
                 // Sender's email ID needs to be mentioned
                 String from = FXMLDocumentController.user;
-                final String username = "user";//change accordingly
                 final String password = FXMLDocumentController.pass; //change accordingly
 
                 // Assuming you are sending email through relay.jangosmtp.net
                 String emailPort = "587";//gmail's smtp port
 
-                Properties mailProp;
-                mailProp = System.getProperties();
-                mailProp.put("mail.smtp.port", emailPort);
-                mailProp.put("mail.transport.protocol", "smtp");
-                mailProp.put("mail.smtp.auth", "true");
-                mailProp.put("mail.smtp.starttls.enable", "true");
-                mailProp.put("mail.smtp.starttls.required", "true");
-                mailProp.put("mail.debug", "true");
-                mailProp.put("mail.smtp.ssl.enable", "true");
-                mailProp.put("mail.smtp.user", "username");
+                Properties props = new Properties();
+                props.put("mail.smtp.auth", "true");
+                props.put("mail.smtp.starttls.enable", "true");
+                props.put("mail.smtp.port", "587");
 
                 // Get the Session object.
-                Session session = Session.getDefaultInstance(mailProp, null);
+                Session session = Session.getDefaultInstance(props, null);
 
                 try {
                     // Create a default MimeMessage object.

@@ -84,23 +84,25 @@ public class FXMLDocumentController implements Initializable {
         voiceUtilit = new VoiceUtility();
         voiceUtilit.SaySomeThingThenReceiveText(voiceRecognitionHelperemail,"please say your email",
                 v->{
-                    user = v;
+                    /*user = v;
                     user = user.replaceAll("\\s+","");
                     emailTxt.setText(user + "@gmail.com");
                     voiceRecognitionHelperemail.destroy();
-                    getPass();
-                });/*
-        voiceRecognitionHelperemail.Init();
-        voiceRecognitionHelperemail.StartListener(v->{
-            voiceRecognitionHelperemail.destroy();
+                    getPass();*/
+                });
+        voiceRecognitionHelperemail.StartListener(v -> {
+            System.out.println(v);
+            user = v;
+            user = user.replaceAll("\\s+","");
+            emailTxt.setText(user + "@gmail.com");
             getPass();
         });
-        */
     }
 
     boolean  checkedLogin =true;
 
     private void getPass() {
+        voiceRecognitionHelperemail.destroy();
         voiceUtilit.SaySomeThingThenReceiveText(voiceRecognitionHelperpass, "enter your password now",
                 v -> {
                     /*voiceRecognitionHelperpass.destroy();
@@ -121,11 +123,13 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    void login(final ActionEvent event) throws java.io.IOException {
+    void login(final ActionEvent event) {
+
 
         voiceRecognitionHelperpass.destroy();
         voiceRecognitionHelperemail.destroy();
-        if (checkedLogin){
+        check("Voicetestu", "Testtest990");
+        /*if (checkedLogin){
             checkedLogin = false;
             user = emailTxt.getText();
             pass = passTxt.getText();
@@ -141,8 +145,8 @@ public class FXMLDocumentController implements Initializable {
                 return;
             }
 
-            check(user, pass);
-        }
+            //check(user, pass);
+        }*/
     }
 
     private void check(final String user, final String password) {
