@@ -164,7 +164,6 @@ public class EmailsController implements Initializable {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
         System.out.println("Sizee: "+ emails.size());
 
         VoiceRecognitionHelper voiceRecognitionHelperCommand = new VoiceRecognitionHelper();
