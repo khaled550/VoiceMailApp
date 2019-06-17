@@ -47,7 +47,4 @@ public class VoiceRecognitionHelper {
         duplex.stopSpeechRecognition();
         micThread.interrupt();
     }
-
-
-
 }

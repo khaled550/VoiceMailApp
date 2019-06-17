@@ -46,7 +46,7 @@ public class FXMLDocumentController implements Initializable {
     public static final ObservableList data =
         FXCollections.observableArrayList();
     
-    public static String user, pass, type = "";
+    public static String user, pass = "";
     boolean logged = false;
     static boolean checked = false;
     
@@ -128,8 +128,7 @@ public class FXMLDocumentController implements Initializable {
 
         voiceRecognitionHelperpass.destroy();
         voiceRecognitionHelperemail.destroy();
-        check("Voicetestu", "Testtest990");
-        /*if (checkedLogin){
+        if (checkedLogin){
             checkedLogin = false;
             user = emailTxt.getText();
             pass = passTxt.getText();
@@ -145,8 +144,8 @@ public class FXMLDocumentController implements Initializable {
                 return;
             }
 
-            //check(user, pass);
-        }*/
+            check(user, pass);
+        }
     }
 
     private void check(final String user, final String password) {

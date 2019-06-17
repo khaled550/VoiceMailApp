@@ -46,41 +46,53 @@ public class SendMailController implements Initializable {
     /**
      * Initializes the controller class.
      */
+
+    VoiceRecognitionHelper voiceRecognitionHelperRec, voiceRecognitionHelperSub, voiceRecognitionHelperCont;
+    VoiceUtility voiceUtility;
+    public static String receiver, subject, content = "";
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
 
-        VoiceRecognitionHelper voiceRecognitionHelperRec = new VoiceRecognitionHelper();
-        VoiceUtility voiceUtility = new VoiceUtility();
+        voiceRecognitionHelperRec = new VoiceRecognitionHelper();
+        voiceRecognitionHelperRec = new VoiceRecognitionHelper();
+        voiceRecognitionHelperRec = new VoiceRecognitionHelper();
+        voiceUtility = new VoiceUtility();
+
+        getReceiverEmail();
+    }
+
+    private void getReceiverEmail(){
         voiceUtility.SaySomeThingThenReceiveText(voiceRecognitionHelperRec,
                 "say receiver email", v->{
-                    voiceRecognitionHelperRec.destroy();
                     System.out.println("receiver email : "+v);
+                    receiver = v;
+                    receiver = receiver.replaceAll("\\s+","");
                     recieverMailTxt.setText(v+"@gmail.com");
                     getSub();
                 });
     }
 
     private void getSub(){
-        VoiceRecognitionHelper voiceRecognitionHelperSub = new VoiceRecognitionHelper();
-        VoiceUtility voiceUtility = new VoiceUtility();
+        voiceRecognitionHelperRec.destroy();
         voiceUtility.SaySomeThingThenReceiveText(voiceRecognitionHelperSub,
                 "say email subject", v->{
-                    voiceRecognitionHelperSub.destroy();
                     System.out.println("subjectTxt : "+v);
-                    subjectTxt.setText(v);
+                    subject = v;
+                    subjectTxt.setText(subject);
                     getContent();
                 });
     }
 
     private void getContent(){
-        VoiceRecognitionHelper voiceRecognitionHelperCont = new VoiceRecognitionHelper();
-        VoiceUtility voiceUtility = new VoiceUtility();
+        voiceRecognitionHelperSub.destroy();
         voiceUtility.SaySomeThingThenReceiveText(voiceRecognitionHelperCont,
                 "say email content", v->{
                     voiceRecognitionHelperCont.destroy();
                     System.out.println("mailConentTxt : "+v);
-                    mailConentTxt.setText(v);
+                    content = v;
+                    mailConentTxt.setText(content);
                     sendEmail();
                 });
     }

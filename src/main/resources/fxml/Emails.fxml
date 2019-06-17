@@ -10,7 +10,7 @@
     <children>
       <JFXListView fx:id="emailsListView" layoutX="147.0" layoutY="14.0" prefHeight="688.0" prefWidth="910.0" style="-fx-background-color: #fff;" />
       <JFXButton layoutX="24.0" layoutY="133.0" onMouseClicked="#sendMail" prefHeight="31.0" prefWidth="86.0" style="-fx-background-color: #3949AB;" text="Send Mail" textFill="WHITE" />
-      <JFXButton layoutX="24.0" layoutY="190.0" prefHeight="31.0" prefWidth="86.0" style="-fx-background-color: #3949AB;" text="Logout" textFill="WHITE" />
+      <JFXButton layoutX="24.0" layoutY="190.0" onAction="#restartApplication" prefHeight="31.0" prefWidth="86.0" style="-fx-background-color: #3949AB;" text="Logout" textFill="WHITE" />
       <ImageView fitHeight="86.0" fitWidth="86.0" layoutX="24.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../gmail.png" />

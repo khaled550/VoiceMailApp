@@ -79,7 +79,7 @@ public class TextToSpeech {
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, "IO Exception", ex);
 		} catch (InterruptedException ex) {
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Interrupted ", ex);
-			tts.interrupt();
+			//tts.interrupt();
 		}
 	}
 	

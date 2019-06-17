@@ -8,19 +8,23 @@ package com.mycompany.voicemailapp;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 
+import java.io.File;
 import java.io.IOException;
 
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -69,7 +73,7 @@ public class EmailsController implements Initializable {
 
         System.out.println(emails.size());
 
-        readNext10Emails();
+        readNext5Emails();
 
         emailsListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
@@ -94,6 +98,33 @@ public class EmailsController implements Initializable {
     void sendMail(MouseEvent event) {
         openSendEmail();
 
+    }
+
+    @FXML
+    void restartApplication(ActionEvent event) throws Throwable {
+
+        startIndex = 0;
+        readListSize = 0;
+        this.finalize();
+        ((Node)(event.getSource())).getScene().getWindow().hide();
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                Parent root = null;
+                try {
+                    root = FXMLLoader.load(getClass().getResource("/fxml/FXMLDocument.fxml"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Stage stage = new Stage();
+                stage.setTitle("VoiceMailApp");
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                if (!stage.isShowing())
+                    stage.show();
+            }
+        });
     }
 
     private void openSendEmail(){
@@ -140,10 +171,10 @@ public class EmailsController implements Initializable {
         });
     }
 
-    private void readNext10Emails(){
+    private void readNext5Emails(){
         List<String> emails = new ArrayList<>();
         int listSize = FXMLDocumentController.messages.length;
-
+        int titleIndex = 1;
         try {
             if (listSize >= startIndex + 5){
                 readListSize += 5;
@@ -152,7 +183,7 @@ public class EmailsController implements Initializable {
 
             System.out.println("Sizee: "+ startIndex);
             System.out.println("Sizee: "+ readListSize);
-
+            titleIndex = startIndex+1;
             for (int i = startIndex; i < readListSize; i++) {
                 startIndex++;
                 try {
@@ -166,21 +197,24 @@ public class EmailsController implements Initializable {
         }
         System.out.println("Sizee: "+ emails.size());
 
+        requestCommand(emails, titleIndex);
+    }
+
+    private void requestCommand(List<String> emails, int titleIndex){
         VoiceRecognitionHelper voiceRecognitionHelperCommand = new VoiceRecognitionHelper();
         VoiceUtility voiceUtility = new VoiceUtility();
         voiceUtility.SaySomeThingThenReceiveText(voiceRecognitionHelperCommand,
-                voiceUtility.sayEmailTitles(emails).toString(), v->{
-                    System.out.println("Command : "+v);
+                voiceUtility.sayEmailTitles(emails, titleIndex).toString(), v->{
                     voiceRecognitionHelperCommand.destroy();
-                    switch (voiceUtility.WhichCommand(v)){
-                        case 1:
-                            //openemailContent(0);
-                        case  2:
-                            openSendEmail();
-                            voiceRecognitionHelperCommand.destroy();
-                        case  3:
-                            readNext10Emails();
-                    }
+                    System.out.println("Command : "+v);
+                    if(v.contains("send")){
+                        //send email
+                        openSendEmail();
+                    }else if (v.contains("continue")){
+                        //read next 5 emails
+                        readNext5Emails();
+                    } else
+                        requestCommand(emails, titleIndex);
                 });
     }
 }
